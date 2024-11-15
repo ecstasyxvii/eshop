@@ -3,3 +3,6 @@ set FLASK_APP=app.py
 .venv\Scripts\activate
 flask db migrate -m "Initial migration"
 flask db upgrade
+git add .
+git commit -m ""
+git push origin branch (main)
