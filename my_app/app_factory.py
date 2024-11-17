@@ -183,7 +183,39 @@ class AppFactory:
                 flash("Товар успешно удален", "success")
                 return redirect(url_for('show_products'))
 
-        
+        #редактирование таблицы продуктов
+        @self.app.route('/products/edit/<int:product_id>', methods=['GET', 'POST'])
+        def edit_product_html(product_id):
+            product = Product.query.get(product_id)
+
+            if not product:
+                flash("Товар не найден", "error")
+                return redirect(url_for('show_products'))
+
+            if request.method == 'POST':
+                name = request.form.get('name')
+                price = request.form.get('price')
+
+                if not name or not price:
+                    flash("Все поля обязательны для заполнения", "error")
+                    return redirect(url_for('edit_product_html', product_id=product_id))
+                
+                try:
+                    price = float(price)
+                except ValueError:
+                    flash("Цена должна быть числом", "error")
+                    return redirect(url_for('edit_product_html', product_id=product_id))
+                
+                product.name = name
+                product.price = price
+                db.session.commit()
+
+                flash("Товар успешно обновлен", "success")
+                return redirect(url_for('show_products'))
+            
+            return render_template('edit_product.html', product=product)
+
+
         #обработка ошиби 404 и 400 
         @self.app.errorhandler(404)
         def not_found_error(error):

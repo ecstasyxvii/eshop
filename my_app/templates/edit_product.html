@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Редактировать товары</h2>
+<form action="{{ url_for('edit_product_html', product_id=product.id) }}" method="POST">
+    <label for="name">Название:</label><br>
+    <input type="text" id="name" name="name" required minlength="2"><br><br>
+    
+    <label for="price">Цена:</label><br>
+    <input type="number" id="price" name="price" required step="0.01" min="0"><br><br>
+
+    <button type="submit">Сохранить</button>
+
+</form>
+<a href="{{ url_for('show_products' )}}">Назад к списку товаров</a>
+{% endblock %}

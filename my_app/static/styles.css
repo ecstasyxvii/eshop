@@ -71,6 +71,35 @@ form input {
     border-radius: 3px;
 }
 
+button, .edit-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+button:hover, .edit-button:hover {
+    background-color: #0056b3;
+}
+
+a {
+    text-decoration: none;
+    color: #007bff;
+    margin-left: 10%;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+header a.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 .alert {
     padding: 1em;
     margin: 1em 10%;

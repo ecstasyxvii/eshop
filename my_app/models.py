@@ -7,7 +7,6 @@ class Product(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)#id
     name = db.Column(db.String(80), nullable=False)#имя позиции
-    description = db.Column(db.String(200), nullable=True) #описание
     price = db.Column(db.Float, nullable=False) #цена
     created_at = db.Column(db.DateTime, default=datetime.utcnow) #время
 
