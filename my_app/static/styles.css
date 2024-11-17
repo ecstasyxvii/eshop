@@ -100,6 +100,30 @@ header a.active {
     text-decoration: underline;
 }
 
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(autofit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-cart h3 {
+    margin: 10px 0;
+}
+
+.details-button {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+.details-button:hover {
+    background-color: #0056b3;
+}
+
 .alert {
     padding: 1em;
     margin: 1em 10%;

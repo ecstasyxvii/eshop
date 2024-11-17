@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ product.name }}</h2>
+<p>Цена: {{ product.price }} руб.</p>
+<p>Дата добавления: {{ product.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+<a href="{{ url_for('catalog') }}">Вернуться в каталог</a>
+<button onclick="addToCart('{{ product.id }}')">Добавить в корзину</button>
+<script>
+    function addToCart(productId) {
+        fetch(`/cart/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || 'Товар добавлен в корзину!');
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Не удалось добавить товар в корзину.');
+        });
+    }
+    </script>
+{% endblock %}

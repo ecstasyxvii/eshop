@@ -4,6 +4,8 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+#ссылки для проверки: /products/html, /catalog
+
 db = SQLAlchemy()
 # инициализация фабрики приложения 
 # (вместо того чтобы создавать глобальный объект приложения app сразу при запуске программы, 
@@ -214,6 +216,24 @@ class AppFactory:
                 return redirect(url_for('show_products'))
             
             return render_template('edit_product.html', product=product)
+        
+        #каталог товаров 
+        @self.app.route('/catalog', methods=['GET'])
+        def catalog():
+            products = Product.query.all()
+
+            return render_template('catalog.html', products=products)
+        
+        #доп инфа о товаре
+        @self.app.route('/product/<int:product_id>', methods=['GET'])
+        def product_details(product_id):
+            product = Product.query.get(product_id)
+
+            if not product:
+                flash("Товар не найден!", "error")
+                return redirect(url_for('catalog'))
+
+            return render_template('product_details.html', product=product)
 
 
         #обработка ошиби 404 и 400 
