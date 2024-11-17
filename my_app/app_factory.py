@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for, flash, redirect
+from dotenv import load_dotenv
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 db = SQLAlchemy()
-
 # инициализация фабрики приложения 
 # (вместо того чтобы создавать глобальный объект приложения app сразу при запуске программы, 
 # мы используем класс и функцию который создает и настраивает приложение только тогда когда это нужно)
@@ -18,6 +19,9 @@ class AppFactory:
         self.app = Flask(__name__)
         self.app.config['SQLALCHEMY_DATABASE_URI'] = self.db_uri
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+        load_dotenv()  #загрузка переменных из файла .env
+        self.app.secret_key = os.getenv("SECRET_KEY")
     
     #инициализация базы данных
         db.init_app(self.app) 
@@ -107,7 +111,7 @@ class AppFactory:
 
             if name:
                 query = query.filter(Product.name.ilike(f'%{name}%'))
-            if min_price is not None:
+            if min_price is not None: #если существует + условие
                 query = query.filter(Product.price >= min_price)
             if max_price is not None:
                 query = query.filter(Product.price <= max_price)
@@ -120,10 +124,51 @@ class AppFactory:
                 "price":p.price
             } for p in products])
         
+        #рендер страницы с продуктами
         @self.app.route('/products/html', methods=['GET'])
         def show_products():
             products = Product.query.all()
             return render_template('products.html', products=products)
+        
+        #форма добавления товара
+        @self.app.route('/products/add', methods=['GET', 'POST'])
+        def add_product_html():
+            if request.method == 'POST':
+                name = request.form.get('name')
+                price = request.form.get('price')
+
+                if not name or not price:
+                    flash("Все поля обязательны для заполнения", "error")
+                    return redirect(url_for('add_product_html'))
+                
+                try: 
+                    float(price)
+                except ValueError:
+                    flash("Цена должна быть числом", "error")
+                    return redirect(url_for('add_product_html'))
+        
+                product = Product(name=name, price=price)
+                db.session.add(product)
+                db.session.commit()
+                flash("Товар успешно добавлен", "success")
+                return redirect(url_for('show_products'))
+            
+            return render_template('add_product.html')
+        
+        #кнопка удаления товара
+        @self.app.route('/products/delete/<int:product_id>', methods=['POST'])
+        def delete_product_html(product_id):
+                product = Product.query.get(product_id)
+
+                if not product:
+                    flash("Товар не найден", "error")
+                    return redirect(url_for('show_products'))
+                
+                db.session.delete(product)
+                db.session.commit()
+                flash("Товар успешно удален", "success")
+                return redirect(url_for('show_products'))
+
         
         #обработка ошиби 404 и 400 
         @self.app.errorhandler(404)

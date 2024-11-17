@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Добавить товар</h2>
+<form action="{{ url_for('add_product_html') }}" method="POST">
+    <label for="name">Название:</label><br>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="price">Цена:</label><br>
+    <input type="text" id="price" name="price" required><br><br>
+
+    <button type="submit">Добавить</button>
+</form>
+<a href="{{ url_for('show_products') }}">Назад к списку товаров</a>
+{% endblock %}
