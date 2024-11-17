@@ -125,11 +125,25 @@ class AppFactory:
             } for p in products])
         
         #рендер страницы с продуктами
-        @self.app.route('/products/html', methods=['GET'])
+        @self.app.route('/products/html', methods=['GET', 'POST'])
         def show_products():
-            products = Product.query.all()
+            query = Product.query
+
+            if request.method == 'POST':
+                name = request.form.get('name')
+                min_price = request.form.get('min_price')
+                max_price = request.form.get('max_price')
+
+                if name:
+                    query = query.filter(Product.name.ilike(f"%{name}%"))
+                if min_price:
+                    query = query.filter(Product.price >= float(min_price))
+                if max_price:
+                    query = query.filter(Product.price <= float(max_price))
+
+            products = query.all()
             return render_template('products.html', products=products)
-        
+
         #форма добавления товара
         @self.app.route('/products/add', methods=['GET', 'POST'])
         def add_product_html():

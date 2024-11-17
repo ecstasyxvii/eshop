@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Список товаров</h2>
+
+<form action="{{ url_for('show_products') }}" method="POST" style="margin-bottom: 2em;">
+    <label for="name">Название:</label>
+    <input type="text" id="name" name="name">
+    
+    <label for="min_price">Цена от:</label>
+    <input type="text" id="min_price" name="min_price">
+
+    <label for="max_price">Цена до:</label>
+    <input type="text" id="max_price" name="max_price">
+
+    <button type="submit">Фильтровать</button>
+</form>
+
 <table>
     <tr>
         <th>ID</th>
@@ -13,6 +27,7 @@
         <td>{{ product.id }}</td>
         <td>{{ product.name }}</td>
         <td>{{ product.price }}</td>
+        <td>{{ product.created_at.strftime('%Y-%m-%d %H:%M:%S')  if product.created_at else 'Не указано'  }}</td>
         <td>
             <form action="{{ url_for('delete_product_html', product_id=product.id) }}" method="POST" style="display:inline;">
                 <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить этот товар?')">Удалить</button>
